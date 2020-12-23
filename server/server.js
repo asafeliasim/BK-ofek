@@ -6,10 +6,11 @@ const dotenv = require('dotenv');
 const mysql = require('mysql');
 const moment = require('moment');
 
-
-const {swAuth,getPartnerIds} = require('./swFunctions/utils');
+var rp = require('request-promise');
+const {swAuth,getPartnerIds,getListOfDevices,enumerateAccountStatistics} = require('./swFunctions/utils');
 dotenv.config();
 
+const axios = require('axios');
 app.use(express.json());
 app.use(cors());
 
@@ -44,164 +45,51 @@ const port = process.env.PORT || 4000;
     });
   })
   
- /*app.get('/api/ignores/test',(req,res)=>{
-  mysqlDB.query('SELECT * FROM SWLBT',function(error, results, fields) {
-    if (error) throw error;
-    customizeDate(results);
-    console.log(results);
-    res.status(201).json(results)
-  });
- })*/
-  // ********************************* DONE ******************************************//
- /* app.get('/api/ignores/swfiles',(req,res)=>{
- 
-    mysqlDB.query('SELECT * FROM SWFiles',function(error, results, fields) {
-      if (error) throw error;
-       customizeDate(results);
-      res.status(201).json(results)
-    });
-  }) */
- // ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swhv',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWHyperV',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
-// ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swlbt',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWLBT',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
+  app.post('/api/insert/:type',(req,res)=>{
+    console.log("this is type: " + req.params.type);
+    console.log("this is body: " + req.body);
+    let date =  new Date(Date.now());
   
-// ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swlstate',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWLinuxSysState',function(error, results, fields) {
-      if (error) throw error;
-     
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
-// ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swms365sharepoint',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWMS365SharePoint',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
-// ********************************* DONE ******************************************//
- /* app.get('/api/ignores/swmsexch365',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWMSExch365',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
-// ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swmsonedrive365',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWMSOneDrive365',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
-// ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swmssql',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWMSSQL',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
-// ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swmyssql',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWMYSQL',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
-// ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swnetwork',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWNetworkShares',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
-  // ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swooracle',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWOracle',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
- // ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swsysstate',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWSysState',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
 
-   // ********************************* DONE ******************************************//
-   /*app.get('/api/ignores/swvexchange',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWVSSExchange',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
+    const sql = `INSERT INTO PRTG.${req.params.type} (name,time,user) VALUES ('${req.body}',NOW(), 'asaf@ofek.com');`
 
-   // ********************************* DONE ******************************************//
-  /* app.get('/api/ignores/swvssmssql',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWVSSMSSQL',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
+      mysqlDB.query(sql,function(error,result){
+        if (error) throw error;
+        res.status(200).json({
+          msg: 'Data send to DB'
+        })
 
-   // ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/swvssharepoint',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWVSSSharePoint',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
-// ********************************* DONE ******************************************//
-  /*app.get('/api/ignores/sevss',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWVSSSysState',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
-  })*/
-
-  /*app.get('/api/ignores/swvmwarevm',(req,res)=>{
-    mysqlDB.query('SELECT * FROM SWVmwareVM',function(error, results, fields) {
-      if (error) throw error;
-      customizeDate(results);
-      res.status(201).json(results);
-    });
+      })
+         
   })
-*/
 
-  app.post('/api/swbackup/login',async(req,res)=>{
-  
+
+  app.post('/api/swbackup/:type',async(req,res)=>{
+      const {type} = req.params;
+
       swAuth.then(data=>{
         const{visa,partnerID} = data;
-        getPartnerIds(visa,partnerID);
       
+        getPartnerIds(visa,partnerID,type).then(data=>{   
+           console.log(data);    
+           getListOfDevices(visa,data,type).then(data=>{
+             console.log("data: " + data);
+            enumerateAccountStatistics(visa,data,type).then((data)=>{
+              const stringData = JSON.stringify(data);
+              const objData = JSON.parse(stringData)
+              res.json({
+                "data": stringData
+              })
+             
+
+            })
+           }).catch(error=>{
+             console.error(error);
+           })
+        }).catch(error=>{
+          console.error(error);
+        });
+       
       }).catch(e=>{
         console.error(e);
       });
