@@ -40,6 +40,7 @@ const port = process.env.PORT || 4000;
     console.log(req.params.url);
     mysqlDB.query(`SELECT * FROM ${req.params.url}`,function(error, results, fields) {
       if (error) throw error;
+   
        customizeDate(results);
       res.status(201).json(results)
     });
@@ -63,6 +64,21 @@ const port = process.env.PORT || 4000;
          
   })
 
+
+  app.post('/api/ignores/remove/:type',(req,res)=>{
+    console.log(req.params.type);
+    const sql = `DELETE FROM PRTG.${req.params.type} WHERE name = ${req.body}`;
+    console.log(sql);
+    console.log("req body " + req.body);
+    mysqlDB.query(sql,1,(error,results,fields)=>{
+      if(error)
+        return res.status(401).json({msg: error})
+      
+        res.send(200).json({
+          msg: `${req.body} deleted from table`
+        })
+    })
+  })
 
   app.post('/api/swbackup/:type',async(req,res)=>{
       const {type} = req.params;
